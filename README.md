@@ -39,5 +39,3 @@ terraform.exe apply `
 -var "pvt_key=C:\Users\kalli\.ssh\id_digitalocean" `
 -var "ssh_fingerprint=$SSH_FINGERPRINT"
 ```
-
-## Digital Ocean droplets
