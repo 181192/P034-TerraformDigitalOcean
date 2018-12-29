@@ -16,6 +16,7 @@ global
   # Default ciphers to use on SSL-enabled listening sockets.
   # For more information, see ciphers(1SSL).
   # Generated 2018-04-07 with https://mozilla.github.io/server-side-tls/ssl-config-generator/
+  tune.ssl.default-dh-param 2048
   ssl-default-bind-ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256
   ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11 no-tls-tickets
   ssl-default-server-ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256
@@ -45,8 +46,20 @@ defaults
 
 frontend www-http
   bind :80
+  reqadd X-Forwarded-Proto:\ http
   default_backend web-backend
 
+frontend www-https
+   bind :443 ssl crt /etc/haproxy/certs/${domain}.pem
+   reqadd X-Forwarded-Proto:\ https
+   acl letsencrypt-acl path_beg /.well-known/acme-challenge/
+   use_backend letsencrypt-backend if letsencrypt-acl
+   default_backend www-backend
+
 backend web-backend
+  redirect scheme https if !{ ssl_fc }
   server web1 ${web1_priv_ip}:80 check
   server web2 ${web2_priv_ip}:80 check
+
+backend letsencrypt-backend
+   server letsencrypt 127.0.0.1:54321

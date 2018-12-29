@@ -13,12 +13,19 @@ resource "digitalocean_droplet" "haproxy-web" {
     private_key = "${file(var.pvt_key)}"
     timeout = "2m"
   }
+  provisioner "file" {
+    source      = "config/haproxyuserdata.sh"
+    destination = "/tmp/haproxyuserdata.sh"
+  }
+
   provisioner "remote-exec" {
     inline = [
-      "sleep 25",
-      "sudo apt-get update",
-      "sudo apt-get -y install haproxy"
+      "chmod +x /tmp/haproxyuserdata.sh",
+      "/tmp/haproxyuserdata.sh"
     ]
+  }
+  provisioner "remote-exec" {
+
   }
   provisioner "file" {
     content = "${data.template_file.haproxyconf.rendered}"
