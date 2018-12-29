@@ -10,10 +10,10 @@ resource "digitalocean_droplet" "web1" {
   connection {
       user = "root"
       type = "ssh"
-      private_ket = "${file(var.pvt_key)}"
+      private_key = "${file(var.pvt_key)}"
       timeout = "2m"
   }
-  provider "remote-exec" {
+  provisioner "remote-exec" {
     inline = [
       "export PATH=$PATH:/usr/bin",
       # install nginx
