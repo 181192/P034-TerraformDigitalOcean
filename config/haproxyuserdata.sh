@@ -10,10 +10,6 @@ export EMAIL=k@kalli.no
 # May or may not have HOME set, and this drops stuff into ~/.local.
 export HOME="/root"
 export PATH="${PATH}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
- 
-sleep 25
-apt-get update
-apt-get -y install haproxy
 
 # No package install yet.
 wget https://dl.eff.org/certbot-auto

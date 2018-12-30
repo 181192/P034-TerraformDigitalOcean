@@ -28,6 +28,14 @@ resource "digitalocean_droplet" "haproxy-web" {
     source      = "config/haproxyuserdata.sh"
     destination = "/tmp/haproxyuserdata.sh"
   }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sleep 25",
+      "apt-get update",
+      "apt-get -y install haproxy"
+    ]
+  }
   provisioner "file" {
     content     = "${data.template_file.haproxyconf.rendered}"
     destination = "/etc/haproxy/haproxy.cfg"
