@@ -1,3 +1,14 @@
+resource "digitalocean_domain" "default" {
+  name = "kalli.app"
+}
+
+resource "digitalocean_record" "terraform" {
+  domain = "${digitalocean_domain.default.name}"
+  type   = "A"
+  name   = "terraform"
+  value  = "${digitalocean_droplet.haproxy-web.ipv4_address}"
+}
+
 resource "digitalocean_droplet" "haproxy-web" {
   image = "ubuntu-16-04-x64"
   name = "haproxy-web"
@@ -24,8 +35,8 @@ resource "digitalocean_droplet" "haproxy-web" {
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/haproxyuserdata.sh",
-      "/tmp/haproxyuserdata.sh",
-      "service haproxy restart"
+      /* "/tmp/haproxyuserdata.sh",
+      "service haproxy restart" */
     ]
   }
 }
