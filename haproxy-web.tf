@@ -17,23 +17,15 @@ resource "digitalocean_droplet" "haproxy-web" {
     source      = "config/haproxyuserdata.sh"
     destination = "/tmp/haproxyuserdata.sh"
   }
-
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/haproxyuserdata.sh",
-      "/tmp/haproxyuserdata.sh"
-    ]
-  }
-  provisioner "remote-exec" {
-
-  }
   provisioner "file" {
-    content = "${data.template_file.haproxyconf.rendered}"
+    content     = "${data.template_file.haproxyconf.rendered}"
     destination = "/etc/haproxy/haproxy.cfg"
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo service haproxy restart"
+      "chmod +x /tmp/haproxyuserdata.sh",
+      "/tmp/haproxyuserdata.sh",
+      "service haproxy restart"
     ]
   }
 }
